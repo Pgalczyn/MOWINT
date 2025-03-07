@@ -1,4 +1,6 @@
 using LinearAlgebra
+using DataFrames
+using CSV
 
 function createMatrix(n,numbersFrom,numbersTo,ifInt)
     # n - rozmiar macierzy (liczba wierszy i kolumn)
@@ -63,6 +65,11 @@ for i in 1:11
 
 end
 
-print(iloczynSkalarnyCzas)
-print("\n")
-print(mnozenieWektorMacierzCzas)
+
+
+df = DataFrame(LiczbaElementów = dlugoscWektorow,
+IloczynSkalarnyCza = iloczynSkalarnyCzas, MnozenieWektorMacierzCzas = mnozenieWektorMacierzCzas)
+
+CSV.write("dataFrame.csv",df)
+
+show(df)
