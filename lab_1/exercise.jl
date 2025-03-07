@@ -1,6 +1,8 @@
 using LinearAlgebra
 using DataFrames
 using CSV
+using Statistics
+using Plots
 
 function createMatrix(n,numbersFrom,numbersTo,ifInt)
     # n - rozmiar macierzy (liczba wierszy i kolumn)
@@ -42,6 +44,8 @@ end
 mnozenieWektorMacierzCzas = []
 iloczynSkalarnyCzas = []
 dlugoscWektorow = []
+odchyiloczynSkalarny = []
+odchymnozenieWektorMacierzCzas = []
 
 for i in 1:11
     n = 1000 + i * 200
@@ -50,17 +54,31 @@ for i in 1:11
     x = createVector(n,0,10,true)
     y = createVector(n,0,10,true)
 
-    t = @elapsed iloczynSkalarny(x,A,y)
-    l = @elapsed mnozenieWektorMacierz(x,A)
+    tempTime1 = []
+    tempTime2 = []
+
+    for j in 1:11
+        
+            t = @elapsed iloczynSkalarny(x,A,y)
+            l = @elapsed mnozenieWektorMacierz(x,A)
+        if i != 1
+            push!(tempTime1,t)
+            push!(tempTime2,l)
+
+    
+        end
+    end
+
     if i != 1
         
         push!(dlugoscWektorow, n)
 
         
-        push!(iloczynSkalarnyCzas, t)
+        push!(iloczynSkalarnyCzas, mean(tempTime1))
+        push!(odchyiloczynSkalarny,std(tempTime1))
 
-        
-        push!(mnozenieWektorMacierzCzas, l)
+        push!(mnozenieWektorMacierzCzas, mean(tempTime2))
+        push!(odchymnozenieWektorMacierzCzas,std(tempTime2))
     end
 
 end
@@ -68,8 +86,25 @@ end
 
 
 df = DataFrame(LiczbaElementów = dlugoscWektorow,
-IloczynSkalarnyCza = iloczynSkalarnyCzas, MnozenieWektorMacierzCzas = mnozenieWektorMacierzCzas)
+IloczynSkalarnyCzas = iloczynSkalarnyCzas,Odchylenie_Iloczyn_Sklarny = odchyiloczynSkalarny,
+ MnozenieWektorMacierzCzas = mnozenieWektorMacierzCzas,Odchylenie_Mnożenie_Wektor_Macierz = odchymnozenieWektorMacierzCzas)
 
 CSV.write("dataFrame.csv",df)
 
 show(df)
+
+myData = CSV.read("dataFrame.csv",delim = ",",DataFrame)
+
+
+#scatter(myData.LiczbaElementów, myData.IloczynSkalarnyCzas,yerr = myData.Odchylenie_Iloczyn_Sklarny)
+
+#show(myData)
+
+p1 = scatter(myData.LiczbaElementów, myData.IloczynSkalarnyCzas, yerr=myData.Odchylenie_Iloczyn_Sklarny,
+             xlabel="Liczba elementów", ylabel="Czas [s]", title="Iloczyn skalarny", label="Czas wykonania", legend=:topleft)
+
+p2 = scatter(myData.LiczbaElementów, myData.MnozenieWektorMacierzCzas, yerr=myData.Odchylenie_Mnożenie_Wektor_Macierz,
+             xlabel="Liczba elementów", ylabel="Czas [s]", title="Mnożenie macierzy przez wektor", label="Czas wykonania", legend=:topleft)
+
+# Układanie wykresów w tabelkę
+plot(p1, p2, layout=(1, 2), size=(1000, 400))
