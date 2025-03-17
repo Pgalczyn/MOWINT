@@ -96,15 +96,11 @@ show(df)
 myData = CSV.read("dataFrame.csv",delim = ",",DataFrame)
 
 
-#scatter(myData.LiczbaElementów, myData.IloczynSkalarnyCzas,yerr = myData.Odchylenie_Iloczyn_Sklarny)
-
-#show(myData)
-
 p1 = scatter(myData.LiczbaElementów, myData.IloczynSkalarnyCzas, yerr=myData.Odchylenie_Iloczyn_Sklarny,
              xlabel="Liczba elementów", ylabel="Czas [s]", title="Iloczyn skalarny", label="Czas wykonania", legend=:topleft)
 
 p2 = scatter(myData.LiczbaElementów, myData.MnozenieWektorMacierzCzas, yerr=myData.Odchylenie_Mnożenie_Wektor_Macierz,
              xlabel="Liczba elementów", ylabel="Czas [s]", title="Mnożenie macierzy przez wektor", label="Czas wykonania", legend=:topleft)
 
-# Układanie wykresów w tabelkę
+
 plot(p1, p2, layout=(1, 2), size=(1000, 400))
