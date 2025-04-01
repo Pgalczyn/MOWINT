@@ -48,7 +48,7 @@ odchyiloczynSkalarny = []
 odchymnozenieWektorMacierzCzas = []
 
 for i in 1:11
-    n = 1000 + i * 200
+    n = 1000 + i * 2000
    
     A = createMatrix(n,0,10,true)
     x = createVector(n,0,10,true)
